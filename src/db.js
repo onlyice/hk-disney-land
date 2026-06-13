@@ -36,6 +36,21 @@ db.exec(`
     open_rides   INTEGER NOT NULL,
     total_rides  INTEGER NOT NULL
   );
+
+  -- 来自 queue-times stats 页面的"最佳到访日"聚合数据。
+  -- 整段以 JSON 形式存一份最新快照（按星期/月份/年份的拥挤指数、设施排行等）。
+  CREATE TABLE IF NOT EXISTS crowd_snapshot (
+    id         INTEGER PRIMARY KEY CHECK (id = 1),
+    payload    TEXT NOT NULL,
+    fetched_at TEXT NOT NULL
+  );
+
+  -- 按日期的每日拥挤指数；持续累积，即使官方只暴露近一段时间也不丢历史。
+  CREATE TABLE IF NOT EXISTS crowd_daily (
+    date        TEXT PRIMARY KEY,  -- YYYY-MM-DD
+    crowd_index REAL,              -- 0-100，越高越拥挤
+    updated_at  TEXT NOT NULL
+  );
 `);
 
 const insertReadingStmt = db.prepare(`
@@ -66,3 +81,32 @@ export const insertSnapshot = db.transaction((snapshot, readings) => {
   insertSnapshotStmt.run(snapshot);
   for (const r of readings) insertReadingStmt.run(r);
 });
+
+// ---- 最佳到访日 / 拥挤日历 ----
+const saveCrowdSnapshotStmt = db.prepare(
+  `INSERT INTO crowd_snapshot (id, payload, fetched_at) VALUES (1, @payload, @fetched_at)
+   ON CONFLICT(id) DO UPDATE SET payload = @payload, fetched_at = @fetched_at`
+);
+
+const upsertDailyStmt = db.prepare(
+  `INSERT INTO crowd_daily (date, crowd_index, updated_at) VALUES (@date, @crowd_index, @updated_at)
+   ON CONFLICT(date) DO UPDATE SET crowd_index = @crowd_index, updated_at = @updated_at`
+);
+
+export const saveCrowdData = db.transaction((payload, fetchedAt, dailyRows) => {
+  saveCrowdSnapshotStmt.run({ payload: JSON.stringify(payload), fetched_at: fetchedAt });
+  for (const row of dailyRows) upsertDailyStmt.run({ ...row, updated_at: fetchedAt });
+});
+
+export function getCrowdSnapshot() {
+  const row = db.prepare('SELECT payload, fetched_at FROM crowd_snapshot WHERE id = 1').get();
+  if (!row) return null;
+  return { ...JSON.parse(row.payload), fetchedAt: row.fetched_at };
+}
+
+export function getDailyCrowd(limit = 120) {
+  return db
+    .prepare('SELECT date, crowd_index FROM crowd_daily ORDER BY date DESC LIMIT ?')
+    .all(limit)
+    .reverse();
+}

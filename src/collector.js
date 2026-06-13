@@ -7,6 +7,7 @@ import { config } from './config.js';
 import { fetchQueueTimes } from './queueTimesClient.js';
 import { snapshotExists, insertSnapshot } from './db.js';
 import { toLocalParts } from './timezone.js';
+import { refreshCrowdData } from './crowdCalendar.js';
 
 /**
  * 执行一次采集。仅在乐园开放（至少一个设施 is_open）时写入，
@@ -76,13 +77,28 @@ async function runWithLogging() {
   }
 }
 
+async function refreshCrowdWithLogging() {
+  try {
+    const r = await refreshCrowdData();
+    console.log(
+      `[${new Date().toISOString()}] 已更新拥挤日历：星期 ${r.weekdays}、月份 ${r.months}、每日 ${r.dailyDays} 天`
+    );
+  } catch (err) {
+    console.error(`[${new Date().toISOString()}] 拥挤日历更新失败：`, err.message);
+  }
+}
+
 export function startCollector() {
   console.log(
     `采集任务已启动（cron: ${config.pollCron}，时区: ${config.timezone}，park: ${config.parkId}）`
   );
   // 启动时立即采集一次，随后按 cron 周期执行。
   runWithLogging();
-  return cron.schedule(config.pollCron, runWithLogging, { timezone: config.timezone });
+  cron.schedule(config.pollCron, runWithLogging, { timezone: config.timezone });
+
+  // 拥挤日历（最佳到访日）变化缓慢，每天刷新一次即可。
+  refreshCrowdWithLogging();
+  cron.schedule('0 4 * * *', refreshCrowdWithLogging, { timezone: config.timezone });
 }
 
 // 作为独立脚本运行时的入口。

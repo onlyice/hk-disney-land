@@ -14,6 +14,8 @@ import {
   getHeatmap,
 } from './analysis.js';
 import { planItinerary } from './planner.js';
+import { getCrowdSnapshot, getDailyCrowd } from './db.js';
+import { refreshCrowdData } from './crowdCalendar.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -75,6 +77,22 @@ app.get('/api/recommendations', (req, res) => {
 app.get('/api/heatmap', (req, res) => {
   const dayType = req.query.dayType || 'all';
   res.json(getHeatmap({ dayType }));
+});
+
+// ---- 最佳到访日 / 拥挤日历 ----
+app.get('/api/crowd', (req, res) => {
+  const snapshot = getCrowdSnapshot();
+  if (!snapshot) return res.json({ empty: true });
+  res.json({ ...snapshot, daily: getDailyCrowd() });
+});
+
+app.post('/api/crowd/refresh', async (req, res) => {
+  try {
+    const summary = await refreshCrowdData();
+    res.json({ ok: true, ...summary });
+  } catch (err) {
+    res.status(502).json({ ok: false, error: err.message });
+  }
 });
 
 // ---- 一日游路线规划 ----

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>香港迪士尼排队时间 · 最佳到访日</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <h1>🏰 香港迪士尼排队时间</h1>
+    <nav>
+      <a href="/">实时</a>
+      <a href="/analysis.html">历史分析</a>
+      <a href="/plan.html">路线规划</a>
+      <a href="/crowd.html" class="active">最佳到访日</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="panel">
+      <h2>历史拥挤数据采集</h2>
+      <p class="muted" style="margin-top:0;">
+        数据来自 queue-times 的统计页面（按星期/月份/日期的整体<strong>拥挤指数</strong>，0–100，越高越拥挤）。
+        这类聚合历史<strong>没有按时段</strong>的细分，用来判断「哪天/哪月去人少」。
+        点下方按钮可立即采集/刷新（服务运行时每天也会自动刷新一次）。
+      </p>
+      <p>
+        <button id="refresh" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:15px;font-weight:600;cursor:pointer;">
+          采集 / 刷新历史拥挤数据
+        </button>
+        <span id="status" class="muted" style="margin-left:12px;"></span>
+      </p>
+    </div>
+
+    <div id="content" style="display:none;">
+      <div class="panel">
+        <h2>① 一周中哪天去？（拥挤指数越低越好）</h2>
+        <div class="chart-wrap" style="height:300px;"><canvas id="weekday-chart"></canvas></div>
+        <p id="weekday-tip" style="margin-bottom:0;"></p>
+      </div>
+
+      <div class="panel">
+        <h2>② 一年中哪个月去？</h2>
+        <div class="chart-wrap" style="height:300px;"><canvas id="month-chart"></canvas></div>
+        <p id="month-tip" style="margin-bottom:0;"></p>
+      </div>
+
+      <div class="panel">
+        <h2>③ 最近每日拥挤指数</h2>
+        <div class="chart-wrap" style="height:280px;"><canvas id="daily-chart"></canvas></div>
+      </div>
+
+      <div class="panel">
+        <h2>④ 历年整体拥挤趋势</h2>
+        <div class="chart-wrap" style="height:260px;"><canvas id="year-chart"></canvas></div>
+      </div>
+
+      <div class="panel">
+        <h2>⑤ 平均最繁忙的项目（行前重点关注）</h2>
+        <table>
+          <thead><tr><th>排名</th><th>项目</th><th class="num">平均等候指数</th></tr></thead>
+          <tbody id="busiest-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="empty" class="panel" style="display:none;">
+      <p class="empty">还没有采集到拥挤数据，请点击上方「采集 / 刷新」按钮。</p>
+    </div>
+  </main>
+
+  <footer class="attribution">
+    数据来源：<a href="https://queue-times.com/en-US" target="_blank" rel="noopener">Powered by Queue-Times.com</a>
+  </footer>
+
+  <script src="/js/crowd.js"></script>
+</body>
+</html>
