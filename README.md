@@ -18,6 +18,9 @@
   2. 指定一个时间点，推荐**当下等候最短的设施排名**；
   3. 全设施 × 各小时的**平均等候热力表**；
   4. 支持按「工作日 / 周末 / 全部」筛选。
+- **一日游路线规划**：勾选想玩的项目、设置入园/离园时间，基于历史数据按时段预测等候，
+  排出一条尽量少排队的游玩顺序——优先在低谷时段玩、把会变拥挤的项目提前、并在高峰时段
+  建议自由活动/用餐，给出每个项目的预计到达、排队、上车与结束时间。
 
 ## 技术栈
 
@@ -101,8 +104,25 @@ docker compose up -d --build
 | `GET /api/rides/:id/best-times?bucket=30&dayType=all` | 最佳/最拥挤时段 |
 | `GET /api/recommendations?time=12:00&dayType=all` | 指定时段的设施推荐 |
 | `GET /api/heatmap?dayType=all` | 全设施 × 小时热力表 |
+| `POST /api/plan` | 一日游路线规划（见下） |
 
 `dayType` 可取 `all` / `weekday` / `weekend`。
+
+`POST /api/plan` 请求体：
+
+```json
+{
+  "rideIds": [9012, 9018],
+  "arrival": "10:00",
+  "departure": "20:00",
+  "dayType": "all",
+  "rideMinutes": 8,
+  "walkMinutes": 10
+}
+```
+
+> 规划为可解释的启发式（贪心 + 高峰推迟），假设你在园内连续游玩；体验时长与步行时间为可调的估算值。
+> 结果仅供行前参考，入园后请以官方 App 的实时等候为准。
 
 ## 许可
 

@@ -13,10 +13,12 @@ import {
   getRecommendations,
   getHeatmap,
 } from './analysis.js';
+import { planItinerary } from './planner.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 
+app.use(express.json());
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // ---- 实时数据（带 60 秒内存缓存，避免频繁打官方接口）----
@@ -73,6 +75,13 @@ app.get('/api/recommendations', (req, res) => {
 app.get('/api/heatmap', (req, res) => {
   const dayType = req.query.dayType || 'all';
   res.json(getHeatmap({ dayType }));
+});
+
+// ---- 一日游路线规划 ----
+app.post('/api/plan', (req, res) => {
+  const result = planItinerary(req.body || {});
+  if (result.error) return res.status(400).json(result);
+  res.json(result);
 });
 
 app.listen(config.port, () => {

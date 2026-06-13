@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>香港迪士尼排队时间 · 路线规划</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>🏰 香港迪士尼排队时间</h1>
+    <nav>
+      <a href="/">实时</a>
+      <a href="/analysis.html">历史分析</a>
+      <a href="/plan.html" class="active">路线规划</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="panel">
+      <h2>① 选择想玩的项目与时间</h2>
+      <div class="controls">
+        <div class="control">
+          <label>入园时间</label>
+          <input type="time" id="arrival" value="10:00" />
+        </div>
+        <div class="control">
+          <label>离园时间</label>
+          <input type="time" id="departure" value="20:00" />
+        </div>
+        <div class="control">
+          <label>日期类型</label>
+          <select id="daytype">
+            <option value="all">全部</option>
+            <option value="weekday">工作日</option>
+            <option value="weekend">周末</option>
+          </select>
+        </div>
+        <div class="control">
+          <label>单项体验时长(分)</label>
+          <input type="time" hidden />
+          <select id="ride-minutes">
+            <option value="5">5</option>
+            <option value="8" selected>8</option>
+            <option value="12">12</option>
+            <option value="15">15</option>
+          </select>
+        </div>
+        <div class="control">
+          <label>项目间步行(分)</label>
+          <select id="walk-minutes">
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="15">15</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="margin:8px 0;">
+        <button id="select-all" class="badge open" style="cursor:pointer;border:none;">全选</button>
+        <button id="select-none" class="badge closed" style="cursor:pointer;border:none;">清空</button>
+        <span class="muted" id="select-hint" style="margin-left:8px;"></span>
+      </div>
+      <div id="ride-list" style="columns:2;column-gap:24px;"></div>
+
+      <p style="margin-top:16px;">
+        <button id="generate" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:15px;font-weight:600;cursor:pointer;">
+          生成游玩路线
+        </button>
+      </p>
+    </div>
+
+    <div class="panel" id="result-panel" style="display:none;">
+      <h2>② 推荐路线</h2>
+      <div class="cards">
+        <div class="card"><div class="label">已安排</div><div class="value" id="r-count">—</div></div>
+        <div class="card"><div class="label">预计总排队</div><div class="value" id="r-wait">—</div></div>
+        <div class="card"><div class="label">预计玩完</div><div class="value" id="r-finish">—</div></div>
+      </div>
+      <table>
+        <thead>
+          <tr><th>#</th><th>到达</th><th>项目</th><th class="num">预计排队</th><th>上项目</th><th>结束</th></tr>
+        </thead>
+        <tbody id="plan-body"></tbody>
+      </table>
+      <div id="leftover"></div>
+      <p class="muted" style="margin-top:12px;">
+        说明：等候时间为历史数据按时段预测的中位值，星号(*)表示该时段数据不足、为估算值。
+        本规划为启发式建议，实际请以官方 App 实时数据为准。
+      </p>
+    </div>
+  </main>
+
+  <footer class="attribution">
+    数据来源：<a href="https://queue-times.com/en-US" target="_blank" rel="noopener">Powered by Queue-Times.com</a>
+  </footer>
+
+  <script src="/js/plan.js"></script>
+</body>
+</html>
