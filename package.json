@@ -1,0 +1,28 @@
+{
+  "name": "hk-disney-land",
+  "version": "1.0.0",
+  "description": "香港迪士尼乐园游乐设施排队时间采集与分析工具",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "collect": "node src/collector.js --once",
+    "collect:loop": "node src/collector.js",
+    "dev": "node --watch src/server.js"
+  },
+  "keywords": [
+    "disneyland",
+    "hong-kong",
+    "queue-times",
+    "wait-times"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "express": "^4.21.2",
+    "node-cron": "^3.0.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>香港迪士尼排队时间 · 历史分析</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <h1>🏰 香港迪士尼排队时间</h1>
+    <nav>
+      <a href="/">实时</a>
+      <a href="/analysis.html" class="active">历史分析</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="cards">
+      <div class="card">
+        <div class="label">已采集天数</div>
+        <div class="value" id="c-days">—</div>
+      </div>
+      <div class="card">
+        <div class="label">数据条数</div>
+        <div class="value" id="c-readings">—</div>
+      </div>
+      <div class="card">
+        <div class="label">时间范围</div>
+        <div class="value" id="c-range" style="font-size:15px;">—</div>
+      </div>
+    </div>
+
+    <!-- 单设施时段画像 -->
+    <div class="panel">
+      <h2>① 单个设施 · 各时段等候时间</h2>
+      <div class="controls">
+        <div class="control">
+          <label>设施</label>
+          <select id="ride-select"></select>
+        </div>
+        <div class="control">
+          <label>日期类型</label>
+          <select id="daytype-1">
+            <option value="all">全部</option>
+            <option value="weekday">工作日</option>
+            <option value="weekend">周末</option>
+          </select>
+        </div>
+        <div class="control">
+          <label>时段粒度</label>
+          <select id="bucket-1">
+            <option value="30">30 分钟</option>
+            <option value="60">60 分钟</option>
+            <option value="15">15 分钟</option>
+          </select>
+        </div>
+      </div>
+      <div class="chart-wrap"><canvas id="profile-chart"></canvas></div>
+      <div id="best-times"></div>
+    </div>
+
+    <!-- 时段推荐 -->
+    <div class="panel">
+      <h2>② 指定时段 · 推荐玩什么（等候最短优先）</h2>
+      <div class="controls">
+        <div class="control">
+          <label>时间</label>
+          <input type="time" id="rec-time" value="12:00" />
+        </div>
+        <div class="control">
+          <label>日期类型</label>
+          <select id="daytype-2">
+            <option value="all">全部</option>
+            <option value="weekday">工作日</option>
+            <option value="weekend">周末</option>
+          </select>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr><th>排名</th><th>设施</th><th class="num">中位等候</th><th class="num">平均等候</th><th class="num">样本</th></tr>
+        </thead>
+        <tbody id="rec-body"><tr><td colspan="5" class="empty">请选择时间</td></tr></tbody>
+      </table>
+    </div>
+
+    <!-- 热力表 -->
+    <div class="panel">
+      <h2>③ 全设施 × 各小时 · 平均等候热力表</h2>
+      <div class="controls">
+        <div class="control">
+          <label>日期类型</label>
+          <select id="daytype-3">
+            <option value="all">全部</option>
+            <option value="weekday">工作日</option>
+            <option value="weekend">周末</option>
+          </select>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="heatmap" id="heatmap"></table>
+      </div>
+      <p class="muted">颜色越绿等候越短、越红越长。空白表示该时段无开放数据。</p>
+    </div>
+  </main>
+
+  <footer class="attribution">
+    数据来源：<a href="https://queue-times.com/en-US" target="_blank" rel="noopener">Powered by Queue-Times.com</a>
+  </footer>
+
+  <script src="/js/analysis.js"></script>
+</body>
+</html>

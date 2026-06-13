@@ -1,0 +1,16 @@
+services:
+  hk-disney-land:
+    build: .
+    container_name: hk-disney-land
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - TIMEZONE=Asia/Hong_Kong
+      - POLL_CRON=*/5 * * * *
+      # 单进程同时采集 + 提供网页
+      - COLLECT_IN_SERVER=true
+    volumes:
+      # 持久化数据库，容器重建也不丢历史数据
+      - ./data:/app/data

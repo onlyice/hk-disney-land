@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>香港迪士尼排队时间 · 实时</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>🏰 香港迪士尼排队时间</h1>
+    <nav>
+      <a href="/" class="active">实时</a>
+      <a href="/analysis.html">历史分析</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="cards">
+      <div class="card">
+        <div class="label">乐园状态</div>
+        <div class="value" id="park-status">—</div>
+      </div>
+      <div class="card">
+        <div class="label">开放设施</div>
+        <div class="value" id="open-count">—</div>
+      </div>
+      <div class="card">
+        <div class="label">数据更新于</div>
+        <div class="value" id="last-updated" style="font-size:16px;">—</div>
+      </div>
+      <div class="card">
+        <div class="label">已采集天数</div>
+        <div class="value" id="days-covered">—</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>当前排队时间（按等候时长排序）</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>设施</th>
+            <th style="width:90px;">状态</th>
+            <th class="num" style="width:120px;">等候(分钟)</th>
+          </tr>
+        </thead>
+        <tbody id="live-body">
+          <tr><td colspan="3" class="empty">加载中…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="muted">每 60 秒自动刷新。历史分析需先持续采集一段时间的数据，详见 <a href="/analysis.html">历史分析</a>。</p>
+  </main>
+
+  <footer class="attribution">
+    数据来源：<a href="https://queue-times.com/en-US" target="_blank" rel="noopener">Powered by Queue-Times.com</a>
+  </footer>
+
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>
